@@ -67,6 +67,38 @@ exports.signUp = async function (req, res, next) {
   }
 };
 
+exports.forgotPwd = async function (req, res, next) {
+  try {
+    let email = req.body.email;
+
+    let data = await User.findOne({ email });
+
+    if (!data) {
+      throw new Error("Please enter valid email");
+    } else {
+      // let pass = req.body.password;
+      // let checkUser = await bcrypt.compare(pass, data.password);
+      // if (!checkUser) {
+      //   throw new Error("Please enter valid password");
+      // } else {
+      //   var token = await jwt.sign({ id: data._id }, "malkari");
+      //   res.status(200).json({
+      //     status: "200",
+      //     message: "login successfully",
+      //     data: data,
+      //     token,
+      //   });
+      // }
+
+    }
+  } catch (err) {
+    res.status(200).json({
+      status: "500",
+      message: err.message,
+    });
+  }
+};
+
 exports.protect = async function (req, res, next) {
   try {
     console.log("Middleware call");

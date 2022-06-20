@@ -153,30 +153,6 @@ exports.getTody = async function (req, res) {
     });
   }
 };
-exports.getonDate = async function (req, res) {
-  try {
-    
-    let today = await Match.find({
-      date: req.params.date,
-    }).populate(
-      "team1 team2",
-      "-players  -createAt -__v -description -teamphoto "
-    );
-    today.map(async (e, i) => {
-      today[i].time = today[i].time.toUpperCase();
-      console.log(today[i].time);
-    });
-    res.status(200).json({
-      status: "200",
-      today,
-    });
-  } catch (err) {
-    res.status(200).json({
-      status: "500",
-      message: err.message,
-    });
-  }
-};
 
 exports.update = async function (req, res, next) {
   try {
