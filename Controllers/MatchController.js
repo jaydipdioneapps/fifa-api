@@ -65,10 +65,10 @@ exports.getForHome = async function (req, res) {
       return 0;
     });
     today.map(async (e, i) => {
-     today[i].time = await today[i].time.toUpperCase();
-   });
-      //  console.log(today[i].team2.colors);
-      // $gte:"Mon May 30 18:47:00 +0000 2015",
+      today[i].time = await today[i].time.toUpperCase();
+    });
+    //  console.log(today[i].team2.colors);
+    // $gte:"Mon May 30 18:47:00 +0000 2015",
     // $lt: "Sun May 30 20:40:36 +0000 2010"
     //2021-05-12T00:00:00.000Z
     //2021-05-12T23:59:59.000Z
@@ -153,7 +153,30 @@ exports.getTody = async function (req, res) {
     });
   }
 };
+exports.getonDate = async function (req, res) {
+  try {
 
+    let today = await Match.find({
+      date: req.params.date,
+    }).populate(
+      "team1 team2",
+      "-players  -createAt -__v -description -teamphoto "
+    );
+    today.map(async (e, i) => {
+      today[i].time = today[i].time.toUpperCase();
+      console.log(today[i].time);
+    });
+    res.status(200).json({
+      status: "200",
+      today,
+    });
+  } catch (err) {
+    res.status(200).json({
+      status: "500",
+      message: err.message,
+    });
+  }
+};
 exports.update = async function (req, res, next) {
   try {
     let data = {
