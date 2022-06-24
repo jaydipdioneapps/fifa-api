@@ -16,10 +16,6 @@ const Prediction = mongoose.Schema({
     ref: "match",
     required: true,
   },
-  ispredict: {
-    type: Boolean,
-    default: false,
-  },
   score: {
     type: Number,
     default: "0"

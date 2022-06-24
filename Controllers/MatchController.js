@@ -4,7 +4,7 @@ const Colors = require("../models/Colors");
 const Prediction = require("../models/Prediction");
 // const ObjectId = require('mongoose').Schema.ObjectId;
 const mongoose = require("mongoose");
-const Group = require("../models/Group");
+// const Group = require("../models/Group");
 
 exports.add = async function (req, res) {
   try {
@@ -81,11 +81,57 @@ exports.getForHome = async function (req, res) {
     );
     last.map(async (e, i) => {
       last[i].time = last[i].time.toUpperCase();
+      return false;
     });
+
+    let data = [];
+    for (let index = 0; index < last.length; index++) {
+      let raju = await Prediction.find({
+        user: req.body.userId,
+        match: last[index]._id,
+      });
+      if (raju.length === 0) {
+        data[index] = {
+          prediction: last[index].prediction,
+          _id: last[index]._id,
+          team1: last[index].team1,
+          team2: last[index].team2,
+          date: last[index].date,
+          time: last[index].time,
+          venue: last[index].venue,
+          matchType: last[index].matchType,
+          ispredict: false,
+          userPrediction : {
+            predictiont1: 0,
+            predictiont2: 0,
+          }
+        };
+      } else {
+        data[index] = {
+          prediction: last[index].prediction,
+          _id: last[index]._id,
+          team1: last[index].team1,
+          team2: last[index].team2,
+          date: last[index].date,
+          time: last[index].time,
+          venue: last[index].venue,
+          matchType: last[index].matchType,
+          ispredict: true,
+          userPrediction : {
+            predictiont1: raju[0].predictiont1,
+            predictiont2: raju[0].predictiont2,
+          }
+        };
+        console.log(raju);
+      }
+    }
+    // console.log(i);
+    // console.log(last);
     res.status(200).json({
       status: "200",
       today: today,
-      last: last,
+      last: data,
+      // data,
     });
   } catch (err) {
     res.status(200).json({
@@ -155,7 +201,6 @@ exports.getTody = async function (req, res) {
 };
 exports.getonDate = async function (req, res) {
   try {
-
     let today = await Match.find({
       date: req.params.date,
     }).populate(
@@ -185,7 +230,7 @@ exports.update = async function (req, res, next) {
         team2: req.body.team2,
       },
     };
-    await Match.findByIdAndUpdate(req.params.id, data);
+    await Match.findByIdAndUpdate(req.body.userId, data);
     // // let predictiont1 = req.body.team1;
     // // let predictiont2 = req.body.team2;
     // res.status(200).json({
@@ -204,7 +249,7 @@ exports.update = async function (req, res, next) {
 
 exports.score = async function (req, res, next) {
   try {
-    let ids = mongoose.Types.ObjectId(req.params.id);
+    let ids = mongoose.Types.ObjectId(req.body.userId);
     let id = await Prediction.find(
       {
         match: ids,
