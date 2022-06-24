@@ -10,7 +10,7 @@ exports.add = async function (req, res) {
         // let addData = await Rules.create(data);
         res.status(200).json({
             status: "200",
-            addData: addData,
+            data,
         });
     } catch (err) {
         res.status(200).json({
