@@ -67,6 +67,51 @@ exports.getForHome = async function (req, res) {
     today.map(async (e, i) => {
       today[i].time = await today[i].time.toUpperCase();
     });
+
+    
+    
+    // today[0].date
+    
+    let data = [];
+    today[0].date.setDate(new Date(today[0].date).getDate() + 1)
+      let raju = await Prediction.find({
+        user: req.body.userId,
+        match: today[0]._id,
+      });
+      if (raju.length === 0) {
+        today[0] = {
+          result: today[0].prediction,
+          _id: today[0]._id,
+          team1: today[0].team1,
+          team2: today[0].team2,
+          date: today[0].date,
+          time: today[0].time,
+          venue: today[0].venue,
+          matchType: today[0].matchType,
+          ispredict: false,
+          userPrediction : {
+            predictiont1: 0,
+            predictiont2: 0,
+          }
+        };
+      } else {
+        today[0] = {
+          result: today[0].prediction,
+          _id: today[0]._id,
+          team1: today[0].team1,
+          team2: today[0].team2,
+          date: today[0].date.setDate(new Date(today[0].date).getDate() + 1),
+          time: today[0].time,
+          venue: today[0].venue,
+          matchType: today[0].matchType,
+          ispredict: true,
+          userPrediction : {
+            predictiont1: raju[0].predictiont1,
+            predictiont2: raju[0].predictiont2,
+          }
+        };
+      }
+    
     //  console.log(today[i].team2.colors);
     // $gte:"Mon May 30 18:47:00 +0000 2015",
     // $lt: "Sun May 30 20:40:36 +0000 2010"
@@ -84,15 +129,16 @@ exports.getForHome = async function (req, res) {
       return false;
     });
 
-    let data = [];
+    // let data = [];
     for (let index = 0; index < last.length; index++) {
       let raju = await Prediction.find({
         user: req.body.userId,
         match: last[index]._id,
       });
+      last[index].date.setDate(new Date(last[index].date).getDate() + 1);
       if (raju.length === 0) {
         data[index] = {
-          prediction: last[index].prediction,
+          result: last[index].prediction,
           _id: last[index]._id,
           team1: last[index].team1,
           team2: last[index].team2,
@@ -108,7 +154,7 @@ exports.getForHome = async function (req, res) {
         };
       } else {
         data[index] = {
-          prediction: last[index].prediction,
+          result: last[index].prediction,
           _id: last[index]._id,
           team1: last[index].team1,
           team2: last[index].team2,
@@ -122,15 +168,15 @@ exports.getForHome = async function (req, res) {
             predictiont2: raju[0].predictiont2,
           }
         };
-        console.log(raju);
       }
     }
+    last = data;
     // console.log(i);
     // console.log(last);
     res.status(200).json({
       status: "200",
       today: today,
-      last: data,
+      last: last,
       // data,
     });
   } catch (err) {
