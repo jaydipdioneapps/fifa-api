@@ -186,6 +186,155 @@ exports.getForHome = async function (req, res) {
     });
   }
 };
+exports.getForResult = async function (req, res) {
+  try {
+    // var i;
+
+    var d = new Date();
+    d.setDate(new Date().getDate() - 1);
+    var tomorrow = moment(d).format("YYYY-MM-DD[T00:00:00.000Z]");
+
+    let main = await Match.findById(req.params.id).populate(
+      "team1 team2",
+      "-players  -createAt -__v -description -teamphoto "
+    );
+
+    main = [main];
+    // console.log(main);
+    await main.map(async (e, i) => {
+      main[i].team1.colors = await Colors.findById(e.team1.colors);
+      return 0;
+    });
+    await main.map(async (e, i) => {
+      main[i].team2.colors = await Colors.findById(e.team2.colors);
+      return 0;
+    });
+    main.map(async (e, i) => {
+      main[i].time = await main[i].time.toUpperCase();
+    });
+
+    
+    
+    // main[0].date
+    
+    main[0].date.setDate(new Date(main[0].date).getDate() + 1)
+      let raju = await Prediction.find({
+        user: req.body.userId,
+        match: main[0]._id,
+      });
+      if (raju.length === 0) {
+        main[0] = {
+          result: main[0].prediction,
+          _id: main[0]._id,
+          team1: main[0].team1,
+          team2: main[0].team2,
+          date: main[0].date,
+          time: main[0].time,
+          venue: main[0].venue,
+          matchType: main[0].matchType,
+          ispredict: false,
+          userPrediction : {
+            predictiont1: 0,
+            predictiont2: 0,
+          }
+        };
+      } else {
+        main[0] = {
+          result: main[0].prediction,
+          _id: main[0]._id,
+          team1: main[0].team1,
+          team2: main[0].team2,
+          date: main[0].date.setDate(new Date(main[0].date).getDate() + 1),
+          time: main[0].time,
+          venue: main[0].venue,
+          matchType: main[0].matchType,
+          ispredict: true,
+          userPrediction : {
+            predictiont1: raju[0].predictiont1,
+            predictiont2: raju[0].predictiont2,
+          }
+        };
+      }
+    
+    //  console.log(main[i].team2.colors);
+    // $gte:"Mon May 30 18:47:00 +0000 2015",
+    // $lt: "Sun May 30 20:40:36 +0000 2010"
+    //2021-05-12T00:00:00.000Z
+    //2021-05-12T23:59:59.000Z
+    // db.collectionName.find({"start_date":{"$lte":new Date()}}).pretty()
+    // db.collectionName.find({"start_date":{"$gte":new Date()}}).pretty()
+
+    let last = await Match.find({ date: { $lt: tomorrow } }).populate(
+      "team1 team2",
+      "-players  -createAt -__v"
+    );
+    last.map(async (e, i) => {
+      last[i].time = last[i].time.toUpperCase();
+      return false;
+    });
+
+    let data = [];
+    let k = 0; 
+    for (let index = 0; index < last.length; index++) {
+      if(last[index]._id == req.params.id){
+        k++;
+        continue;
+      }
+      let raju = await Prediction.find({
+        user: req.body.userId,
+        match: last[index]._id,
+      });
+      last[index].date.setDate(new Date(last[index].date).getDate() + 1);
+      if (raju.length === 0) {
+        data[index - k] = {
+          result: last[index].prediction,
+          _id: last[index]._id,
+          team1: last[index].team1,
+          team2: last[index].team2,
+          date: last[index].date,
+          time: last[index].time,
+          venue: last[index].venue,
+          matchType: last[index].matchType,
+          ispredict: false,
+          userPrediction : {
+            predictiont1: 0,
+            predictiont2: 0,
+          }
+        };
+      } else {
+        data[index - k] = {
+          result: last[index].prediction,
+          _id: last[index]._id,
+          team1: last[index].team1,
+          team2: last[index].team2,
+          date: last[index].date,
+          time: last[index].time,
+          venue: last[index].venue,
+          matchType: last[index].matchType,
+          ispredict: true,
+          userPrediction : {
+            predictiont1: raju[0].predictiont1,
+            predictiont2: raju[0].predictiont2,
+          }
+        };
+      }
+    }
+    last = data;
+    // console.log(i);
+    // console.log(last);
+    res.status(200).json({
+      status: "200",
+      main: main,
+      last: last,
+      // data,
+    });
+  } catch (err) {
+    res.status(200).json({
+      status: "500",
+      message: err.message,
+    });
+  }
+};
 
 exports.getForUpcoming = async function (req, res) {
   try {

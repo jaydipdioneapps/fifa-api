@@ -6,6 +6,7 @@ var AuthController = require('../Controllers/AuthController');
 /* GET users listing. */
 router.get('/home', AuthController.protectGlobal, AuthController.protect, matchController.getForHome);
 router.get('/today', AuthController.protectGlobal, matchController.getTody);
+router.get('/:id', AuthController.protectGlobal, matchController.getForResult);
 router.get('/date/:date', AuthController.protectGlobal, matchController.getonDate);
 router.get('/upcoming', AuthController.protectGlobal, matchController.getForUpcoming);
 router.post('/', AuthController.protectGlobal, matchController.add);
