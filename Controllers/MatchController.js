@@ -74,10 +74,12 @@ exports.getForHome = async function (req, res) {
     
     let data = [];
     today[0].date.setDate(new Date(today[0].date).getDate() + 1)
-      let raju = await Prediction.find({
-        user: req.body.userId,
-        match: today[0]._id,
-      });
+    let raju = await Prediction.find({
+      user: req.body.userId,
+      match: today[0]._id,
+    });
+    console.log(req.body.userId);
+    today[0].date.setDate(new Date(today[0].date).getDate() + 1)
       if (raju.length === 0) {
         today[0] = {
           result: today[0].prediction,
@@ -100,7 +102,7 @@ exports.getForHome = async function (req, res) {
           _id: today[0]._id,
           team1: today[0].team1,
           team2: today[0].team2,
-          date: today[0].date.setDate(new Date(today[0].date).getDate() + 1),
+          date: today[0].date,
           time: today[0].time,
           venue: today[0].venue,
           matchType: today[0].matchType,
@@ -222,6 +224,8 @@ exports.getForResult = async function (req, res) {
         user: req.body.userId,
         match: main[0]._id,
       });
+    console.log(req.body.userId);
+    main[0].date.setDate(new Date(main[0].date).getDate() + 1)
       if (raju.length === 0) {
         main[0] = {
           result: main[0].prediction,
@@ -244,7 +248,7 @@ exports.getForResult = async function (req, res) {
           _id: main[0]._id,
           team1: main[0].team1,
           team2: main[0].team2,
-          date: main[0].date.setDate(new Date(main[0].date).getDate() + 1),
+          date: main[0].date,
           time: main[0].time,
           venue: main[0].venue,
           matchType: main[0].matchType,

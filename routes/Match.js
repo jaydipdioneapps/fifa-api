@@ -5,11 +5,11 @@ var AuthController = require('../Controllers/AuthController');
 
 /* GET users listing. */
 router.get('/home', AuthController.protectGlobal, AuthController.protect, matchController.getForHome);
-router.get('/today', AuthController.protectGlobal, matchController.getTody);
-router.get('/:id', AuthController.protectGlobal, matchController.getForResult);
-router.get('/date/:date', AuthController.protectGlobal, matchController.getonDate);
-router.get('/upcoming', AuthController.protectGlobal, matchController.getForUpcoming);
-router.post('/', AuthController.protectGlobal, matchController.add);
-router.patch('/:id', AuthController.protectGlobal, matchController.update, matchController.score);
+router.get('/today', AuthController.protectGlobal,  AuthController.protect ,matchController.getTody);
+router.get('/:id', AuthController.protectGlobal, AuthController.protect, matchController.getForResult);
+router.get('/date/:date', AuthController.protectGlobal, AuthController.protect, matchController.getonDate);
+router.get('/upcoming', AuthController.protectGlobal, AuthController.protect, matchController.getForUpcoming);
+router.post('/', AuthController.protectGlobal, AuthController.protect, matchController.add);
+router.patch('/:id', AuthController.protectGlobal, AuthController.protect, matchController.update, matchController.score);
 
 module.exports = router;
