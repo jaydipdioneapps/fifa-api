@@ -78,7 +78,6 @@ exports.getForHome = async function (req, res) {
       user: req.body.userId,
       match: today[0]._id,
     });
-    console.log(req.body.userId);
     today[0].date.setDate(new Date(today[0].date).getDate() + 1)
       if (raju.length === 0) {
         today[0] = {
