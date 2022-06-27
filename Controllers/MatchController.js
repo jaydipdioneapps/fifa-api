@@ -129,13 +129,21 @@ exports.getForHome = async function (req, res) {
       last[i].time = last[i].time.toUpperCase();
       return false;
     });
-
+    await last.map(async (e, i) => {
+      last[i].team1.colors = await Colors.findById(e.team1.colors);
+      return 0;
+    });
+    await last.map(async (e, i) => {
+      last[i].team2.colors = await Colors.findById(e.team2.colors);
+      return 0;
+    });
     // let data = [];
     for (let index = 0; index < last.length; index++) {
       let raju = await Prediction.find({
         user: req.body.userId,
         match: last[index]._id,
       });
+      
       last[index].date.setDate(new Date(last[index].date).getDate() + 1);
       if (raju.length === 0) {
         data[index] = {
@@ -275,7 +283,14 @@ exports.getForResult = async function (req, res) {
       last[i].time = last[i].time.toUpperCase();
       return false;
     });
-
+    await last.map(async (e, i) => {
+      last[i].team1.colors = await Colors.findById(e.team1.colors);
+      return 0;
+    });
+    await last.map(async (e, i) => {
+      last[i].team2.colors = await Colors.findById(e.team2.colors);
+      return 0;
+    });
     let data = [];
     let k = 0; 
     for (let index = 0; index < last.length; index++) {
