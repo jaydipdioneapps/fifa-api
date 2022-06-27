@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 const User = require("../models/User");
+var nodemailer = require("nodemailer");
 
 exports.login = async function (req, res, next) {
   try {
@@ -153,4 +154,44 @@ exports.protectGlobal = async function (req, res, next) {
     });
   }
 };
+exports.mainsending = async function (req, res, next) {
+  try {
+    
+      var from = req.body.from;
+      var to = req.body.to;
+      var subject = req.body.subject;
+      var message = req.body.message;
 
+      var transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: "sojitraayush2101@gmail.com",
+          pass: "lngmthisstvznooy",
+        },
+      });
+
+      var mailOptions = {
+        from: from,
+        to: to,
+        subject: subject,
+        text: message,
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Email Sent: " + info.response);
+        }
+        res.status(200).json({
+          status: "500",
+          info,
+        });
+      });
+  } catch (err) {
+    res.status(200).json({
+      status: "500",
+      message: err.message,
+    });
+  }
+};
