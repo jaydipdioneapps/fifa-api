@@ -232,7 +232,6 @@ exports.getForResult = async function (req, res) {
         match: main[0]._id,
       });
     console.log(req.body.userId);
-    main[0].date.setDate(new Date(main[0].date).getDate() + 1)
       if (raju.length === 0) {
         main[0] = {
           result: main[0].prediction,
