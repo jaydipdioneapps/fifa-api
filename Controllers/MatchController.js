@@ -68,10 +68,10 @@ exports.getForHome = async function (req, res) {
       today[i].time = await today[i].time.toUpperCase();
     });
 
-    
-    
+
+
     // today[0].date
-    
+
     let data = [];
     today[0].date.setDate(new Date(today[0].date).getDate() + 1)
     let raju = await Prediction.find({
@@ -79,40 +79,40 @@ exports.getForHome = async function (req, res) {
       match: today[0]._id,
     });
     today[0].date.setDate(new Date(today[0].date).getDate() + 1)
-      if (raju.length === 0) {
-        today[0] = {
-          result: today[0].prediction,
-          _id: today[0]._id,
-          team1: today[0].team1,
-          team2: today[0].team2,
-          date: today[0].date,
-          time: today[0].time,
-          venue: today[0].venue,
-          matchType: today[0].matchType,
-          ispredict: false,
-          userPrediction : {
-            predictiont1: 0,
-            predictiont2: 0,
-          }
-        };
-      } else {
-        today[0] = {
-          result: today[0].prediction,
-          _id: today[0]._id,
-          team1: today[0].team1,
-          team2: today[0].team2,
-          date: today[0].date,
-          time: today[0].time,
-          venue: today[0].venue,
-          matchType: today[0].matchType,
-          ispredict: true,
-          userPrediction : {
-            predictiont1: raju[0].predictiont1,
-            predictiont2: raju[0].predictiont2,
-          }
-        };
-      }
-    
+    if (raju.length === 0) {
+      today[0] = {
+        result: today[0].prediction,
+        _id: today[0]._id,
+        team1: today[0].team1,
+        team2: today[0].team2,
+        date: today[0].date,
+        time: today[0].time,
+        venue: today[0].venue,
+        matchType: today[0].matchType,
+        ispredict: false,
+        userPrediction: {
+          predictiont1: 0,
+          predictiont2: 0,
+        }
+      };
+    } else {
+      today[0] = {
+        result: today[0].prediction,
+        _id: today[0]._id,
+        team1: today[0].team1,
+        team2: today[0].team2,
+        date: today[0].date,
+        time: today[0].time,
+        venue: today[0].venue,
+        matchType: today[0].matchType,
+        ispredict: true,
+        userPrediction: {
+          predictiont1: raju[0].predictiont1,
+          predictiont2: raju[0].predictiont2,
+        }
+      };
+    }
+
     //  console.log(today[i].team2.colors);
     // $gte:"Mon May 30 18:47:00 +0000 2015",
     // $lt: "Sun May 30 20:40:36 +0000 2010"
@@ -143,7 +143,7 @@ exports.getForHome = async function (req, res) {
         user: req.body.userId,
         match: last[index]._id,
       });
-      
+
       last[index].date.setDate(new Date(last[index].date).getDate() + 1);
       if (raju.length === 0) {
         data[index] = {
@@ -156,7 +156,7 @@ exports.getForHome = async function (req, res) {
           venue: last[index].venue,
           matchType: last[index].matchType,
           ispredict: false,
-          userPrediction : {
+          userPrediction: {
             predictiont1: 0,
             predictiont2: 0,
           }
@@ -172,7 +172,7 @@ exports.getForHome = async function (req, res) {
           venue: last[index].venue,
           matchType: last[index].matchType,
           ispredict: true,
-          userPrediction : {
+          userPrediction: {
             predictiont1: raju[0].predictiont1,
             predictiont2: raju[0].predictiont2,
           }
@@ -222,50 +222,50 @@ exports.getForResult = async function (req, res) {
       main[i].time = await main[i].time.toUpperCase();
     });
 
-    
-    
+
+
     // main[0].date
-    
+
     main[0].date.setDate(new Date(main[0].date).getDate() + 1)
-      let raju = await Prediction.find({
-        user: req.body.userId,
-        match: main[0]._id,
-      });
+    let raju = await Prediction.find({
+      user: req.body.userId,
+      match: main[0]._id,
+    });
     console.log(req.body.userId);
-      if (raju.length === 0) {
-        main[0] = {
-          result: main[0].prediction,
-          _id: main[0]._id,
-          team1: main[0].team1,
-          team2: main[0].team2,
-          date: main[0].date,
-          time: main[0].time,
-          venue: main[0].venue,
-          matchType: main[0].matchType,
-          ispredict: false,
-          userPrediction : {
-            predictiont1: 0,
-            predictiont2: 0,
-          }
-        };
-      } else {
-        main[0] = {
-          result: main[0].prediction,
-          _id: main[0]._id,
-          team1: main[0].team1,
-          team2: main[0].team2,
-          date: main[0].date,
-          time: main[0].time,
-          venue: main[0].venue,
-          matchType: main[0].matchType,
-          ispredict: true,
-          userPrediction : {
-            predictiont1: raju[0].predictiont1,
-            predictiont2: raju[0].predictiont2,
-          }
-        };
-      }
-    
+    if (raju.length === 0) {
+      main[0] = {
+        result: main[0].prediction,
+        _id: main[0]._id,
+        team1: main[0].team1,
+        team2: main[0].team2,
+        date: main[0].date,
+        time: main[0].time,
+        venue: main[0].venue,
+        matchType: main[0].matchType,
+        ispredict: false,
+        userPrediction: {
+          predictiont1: 0,
+          predictiont2: 0,
+        }
+      };
+    } else {
+      main[0] = {
+        result: main[0].prediction,
+        _id: main[0]._id,
+        team1: main[0].team1,
+        team2: main[0].team2,
+        date: main[0].date,
+        time: main[0].time,
+        venue: main[0].venue,
+        matchType: main[0].matchType,
+        ispredict: true,
+        userPrediction: {
+          predictiont1: raju[0].predictiont1,
+          predictiont2: raju[0].predictiont2,
+        }
+      };
+    }
+
     //  console.log(main[i].team2.colors);
     // $gte:"Mon May 30 18:47:00 +0000 2015",
     // $lt: "Sun May 30 20:40:36 +0000 2010"
@@ -291,9 +291,9 @@ exports.getForResult = async function (req, res) {
       return 0;
     });
     let data = [];
-    let k = 0; 
+    let k = 0;
     for (let index = 0; index < last.length; index++) {
-      if(last[index]._id == req.params.id){
+      if (last[index]._id == req.params.id) {
         k++;
         continue;
       }
@@ -313,7 +313,7 @@ exports.getForResult = async function (req, res) {
           venue: last[index].venue,
           matchType: last[index].matchType,
           ispredict: false,
-          userPrediction : {
+          userPrediction: {
             predictiont1: 0,
             predictiont2: 0,
           }
@@ -329,7 +329,7 @@ exports.getForResult = async function (req, res) {
           venue: last[index].venue,
           matchType: last[index].matchType,
           ispredict: true,
-          userPrediction : {
+          userPrediction: {
             predictiont1: raju[0].predictiont1,
             predictiont2: raju[0].predictiont2,
           }
