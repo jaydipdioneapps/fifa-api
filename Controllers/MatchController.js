@@ -77,6 +77,7 @@ exports.getForHome = async function (req, res) {
       match: today[0]._id,
     });
     today[0].date.setDate(new Date(today[0].date).getDate() + 1);
+    let cnt = await Prediction.find({ match: today[0]._id });
     if (raju.length === 0) {
       today[0] = {
         result: today[0].prediction,
@@ -92,6 +93,7 @@ exports.getForHome = async function (req, res) {
           predictiont1: 0,
           predictiont2: 0,
         },
+        totalPrediction: cnt.length,
       };
     } else {
       today[0] = {
@@ -108,6 +110,7 @@ exports.getForHome = async function (req, res) {
           predictiont1: raju[0].predictiont1,
           predictiont2: raju[0].predictiont2,
         },
+        totalPrediction: cnt.length,
       };
     }
 
@@ -141,7 +144,7 @@ exports.getForHome = async function (req, res) {
         user: req.body.userId,
         match: last[index]._id,
       });
-
+      let cnt = await Prediction.find({ match: last[index]._id });
       last[index].date.setDate(new Date(last[index].date).getDate() + 1);
       if (raju.length === 0) {
         data[index] = {
@@ -158,6 +161,7 @@ exports.getForHome = async function (req, res) {
             predictiont1: 0,
             predictiont2: 0,
           },
+          totalPrediction: cnt.length,
         };
       } else {
         data[index] = {
@@ -174,6 +178,7 @@ exports.getForHome = async function (req, res) {
             predictiont1: raju[0].predictiont1,
             predictiont2: raju[0].predictiont2,
           },
+          totalPrediction: cnt.length,
         };
       }
     }
@@ -347,7 +352,7 @@ exports.getForResult = async function (req, res) {
             predictiont1: raju[0].predictiont1,
             predictiont2: raju[0].predictiont2,
           },
-          reaction
+          reaction,
         };
       }
     }
