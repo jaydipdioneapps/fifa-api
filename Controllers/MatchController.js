@@ -68,17 +68,15 @@ exports.getForHome = async function (req, res) {
       today[i].time = await today[i].time.toUpperCase();
     });
 
-
-
     // today[0].date
 
     let data = [];
-    today[0].date.setDate(new Date(today[0].date).getDate() + 1)
+    today[0].date.setDate(new Date(today[0].date).getDate() + 1);
     let raju = await Prediction.find({
       user: req.body.userId,
       match: today[0]._id,
     });
-    today[0].date.setDate(new Date(today[0].date).getDate() + 1)
+    today[0].date.setDate(new Date(today[0].date).getDate() + 1);
     if (raju.length === 0) {
       today[0] = {
         result: today[0].prediction,
@@ -93,7 +91,7 @@ exports.getForHome = async function (req, res) {
         userPrediction: {
           predictiont1: 0,
           predictiont2: 0,
-        }
+        },
       };
     } else {
       today[0] = {
@@ -109,7 +107,7 @@ exports.getForHome = async function (req, res) {
         userPrediction: {
           predictiont1: raju[0].predictiont1,
           predictiont2: raju[0].predictiont2,
-        }
+        },
       };
     }
 
@@ -159,7 +157,7 @@ exports.getForHome = async function (req, res) {
           userPrediction: {
             predictiont1: 0,
             predictiont2: 0,
-          }
+          },
         };
       } else {
         data[index] = {
@@ -175,7 +173,7 @@ exports.getForHome = async function (req, res) {
           userPrediction: {
             predictiont1: raju[0].predictiont1,
             predictiont2: raju[0].predictiont2,
-          }
+          },
         };
       }
     }
@@ -222,16 +220,14 @@ exports.getForResult = async function (req, res) {
       main[i].time = await main[i].time.toUpperCase();
     });
 
-
-
     // main[0].date
 
-    main[0].date.setDate(new Date(main[0].date).getDate() + 1)
+    main[0].date.setDate(new Date(main[0].date).getDate() + 1);
     let raju = await Prediction.find({
       user: req.body.userId,
       match: main[0]._id,
     });
-    console.log(req.body.userId);
+    console.log(raju[0].score);
     if (raju.length === 0) {
       main[0] = {
         result: main[0].prediction,
@@ -246,9 +242,18 @@ exports.getForResult = async function (req, res) {
         userPrediction: {
           predictiont1: 0,
           predictiont2: 0,
-        }
+        },
+        reaction: "No Prediction",
       };
     } else {
+      var reaction = "";
+      if (raju[0].score === 0) {
+        reaction = "Oops!! 🥵";
+      } else if (raju[0].score === 2) {
+        reaction = "Uufff!! 😮‍💨";
+      } else if (raju[0].score === 3) {
+        reaction = "Woohoo!! 🎉";
+      }
       main[0] = {
         result: main[0].prediction,
         _id: main[0]._id,
@@ -262,7 +267,8 @@ exports.getForResult = async function (req, res) {
         userPrediction: {
           predictiont1: raju[0].predictiont1,
           predictiont2: raju[0].predictiont2,
-        }
+        },
+        reaction,
       };
     }
 
@@ -316,9 +322,18 @@ exports.getForResult = async function (req, res) {
           userPrediction: {
             predictiont1: 0,
             predictiont2: 0,
-          }
+          },
+          reaction: "No Prediction",
         };
       } else {
+        var reaction = "";
+        if (raju[0].score === 0) {
+          reaction = "Oops!! 🥵";
+        } else if (raju[0].score === 2) {
+          reaction = "Uufff!! 😮‍💨";
+        } else if (raju[0].score === 3) {
+          reaction = "Woohoo!! 🎉";
+        }
         data[index - k] = {
           result: last[index].prediction,
           _id: last[index]._id,
@@ -332,7 +347,8 @@ exports.getForResult = async function (req, res) {
           userPrediction: {
             predictiont1: raju[0].predictiont1,
             predictiont2: raju[0].predictiont2,
-          }
+          },
+          reaction
         };
       }
     }
@@ -442,7 +458,7 @@ exports.update = async function (req, res, next) {
         team2: req.body.team2,
       },
     };
-    await Match.findByIdAndUpdate(req.body.userId, data);
+    await Match.findByIdAndUpdate(req.params.id, data);
     // // let predictiont1 = req.body.team1;
     // // let predictiont2 = req.body.team2;
     // res.status(200).json({
@@ -461,7 +477,7 @@ exports.update = async function (req, res, next) {
 
 exports.score = async function (req, res, next) {
   try {
-    let ids = mongoose.Types.ObjectId(req.body.userId);
+    let ids = mongoose.Types.ObjectId(req.params.id);
     let id = await Prediction.find(
       {
         match: ids,
@@ -470,18 +486,6 @@ exports.score = async function (req, res, next) {
     );
     id.map(async (e) => {
       let data = await Prediction.findByIdAndUpdate(e.id, { score: 0 });
-      console.log(data);
-    });
-    id = await Prediction.find(
-      {
-        predictiont1: req.body.team1,
-        predictiont2: req.body.team2,
-        match: ids,
-      },
-      { _id: 1 }
-    );
-    id.map(async (e) => {
-      let data = await Prediction.findByIdAndUpdate(e.id, { score: 3 });
       console.log(data);
     });
     if (req.body.team1 > req.body.team2) {
@@ -518,6 +522,18 @@ exports.score = async function (req, res, next) {
         await Prediction.findByIdAndUpdate(e.id, { score: 1 });
       });
     }
+    id = await Prediction.find(
+      {
+        predictiont1: req.body.team1,
+        predictiont2: req.body.team2,
+        match: ids,
+      },
+      { _id: 1 }
+    );
+    id.map(async (e) => {
+      let data = await Prediction.findByIdAndUpdate(e.id, { score: 3 });
+      console.log(data);
+    });
     res.status(200).json({
       status: "200",
       message: "success",

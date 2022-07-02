@@ -10,6 +10,6 @@ router.get('/result/:id', AuthController.protectGlobal, AuthController.protect, 
 router.get('/date/:date', AuthController.protectGlobal, AuthController.protect, matchController.getonDate);
 router.get('/upcoming', AuthController.protectGlobal, AuthController.protect, matchController.getForUpcoming);
 router.post('/', AuthController.protectGlobal, AuthController.protect, matchController.add);
-router.patch('/:id', AuthController.protectGlobal, AuthController.protect, matchController.update, matchController.score);
+router.patch('/:id', AuthController.protectGlobal, matchController.update, matchController.score);
 
 module.exports = router;
