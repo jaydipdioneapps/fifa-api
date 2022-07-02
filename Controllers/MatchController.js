@@ -227,7 +227,6 @@ exports.getForResult = async function (req, res) {
       user: req.body.userId,
       match: main[0]._id,
     });
-    console.log(raju[0].score);
     if (raju.length === 0) {
       main[0] = {
         result: main[0].prediction,
