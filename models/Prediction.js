@@ -20,6 +20,10 @@ const Prediction = mongoose.Schema({
     type: Number,
     default: "0"
   },
+  createAt: {
+    type: Date,
+    required : true 
+  },
 });
 //3:2
 //2:3

@@ -23,7 +23,8 @@ app.use("/team", require("./routes/Team"));
 app.use("/match", require("./routes/Match"));
 app.use("/user", require("./routes/User"));
 app.use("/colors", require("./routes/Colors"));
-app.use("/rules", require("./routes/Rules"));
+app.use("/rules", require("./routes/Rules")); 
+app.use("/leaderboard", require("./routes/Leaderboard")); 
 app.use("/", require("./routes/home"));
 
 app.use((req, res, next) => {
