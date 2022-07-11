@@ -247,16 +247,16 @@ exports.getForResult = async function (req, res) {
           predictiont1: 0,
           predictiont2: 0,
         },
-        reaction: "No Prediction",
+        reaction: "http://13.233.194.118:3002/images/reactions/noprediction.png",
       };
     } else {
       var reaction = "";
       if (raju[0].score === 0) {
-        reaction = "Oops!! 🥵";
+        reaction = "http://13.233.194.118:3002/images/reactions/oops!!.png";
       } else if (raju[0].score === 2) {
-        reaction = "Uufff!! 😮‍💨";
+        reaction = "http://13.233.194.118:3002/images/reactions/uufff!!.png";
       } else if (raju[0].score === 3) {
-        reaction = "Woohoo!! 🎉";
+        reaction = "http://13.233.194.118:3002/images/reactions/woohoo!!.png";
       }
       main[0] = {
         result: main[0].prediction,
@@ -327,16 +327,16 @@ exports.getForResult = async function (req, res) {
             predictiont1: 0,
             predictiont2: 0,
           },
-          reaction: "No Prediction",
+          reaction: "http://13.233.194.118:3002/images/reactions/noprediction.png",
         };
       } else {
         var reaction = "";
         if (raju[0].score === 0) {
-          reaction = "Oops!! 🥵";
+          reaction = "http://13.233.194.118:3002/images/reactions/oops!!.png";
         } else if (raju[0].score === 2) {
-          reaction = "Uufff!! 😮‍💨";
+          reaction = "http://13.233.194.118:3002/images/reactions/uufff!!.png";
         } else if (raju[0].score === 3) {
-          reaction = "Woohoo!! 🎉";
+          reaction = "http://13.233.194.118:3002/images/reactions/woohoo!!.png";
         }
         data[index - k] = {
           result: last[index].prediction,
@@ -376,13 +376,6 @@ exports.getForResult = async function (req, res) {
 exports.getForUpcoming = async function (req, res) {
   try {
     var d = new Date();
-    // d.setDate(new Date().getDate() - 1);
-    // var g = new Date();
-    // g.setDate(new Date().getDate() + 1);
-    // var tomorrow = moment(d).format("YYYY-MM-DD[T00:00:00.000Z]");
-    // var nextoftomorrow = moment(g).format("YYYY-MM-DD[T00:00:00.000Z]");
-    // console.log(d);
-    // console.log(g);
     let upcoming = await Match.find({
       date: { $gte: d },
     }).populate(
@@ -391,11 +384,75 @@ exports.getForUpcoming = async function (req, res) {
     );
     upcoming.map(async (e, i) => {
       upcoming[i].time = upcoming[i].time.toUpperCase();
-      console.log(upcoming[i].time);
     });
+    await upcoming.map(async (e, i) => {
+      upcoming[i].team2.colors = await Colors.findById(e.team2.colors);
+      return 0;
+    });
+    await upcoming.map(async (e, i) => {
+      upcoming[i].team1.colors = await Colors.findById(e.team1.colors);
+      return 0;
+    });
+    let data = [];
+    let k = 0;
+    for (let index = 0; index < upcoming.length; index++) {
+      if (upcoming[index]._id == req.params.id) {
+        k++;
+        continue;
+      }
+      let raju = await Prediction.find({
+        user: req.body.userId,
+        match: upcoming[index]._id,
+      });
+      upcoming[index].date.setDate(new Date(upcoming[index].date).getDate() + 1);
+      if (raju.length === 0) {
+        data[index - k] = {
+          result: upcoming[index].prediction,
+          _id: upcoming[index]._id,
+          team1: upcoming[index].team1,
+          team2: upcoming[index].team2,
+          date: upcoming[index].date,
+          time: upcoming[index].time,
+          venue: upcoming[index].venue,
+          matchType: upcoming[index].matchType,
+          ispredict: false,
+          userPrediction: {
+            predictiont1: 0,
+            predictiont2: 0,
+          },
+          reaction: "No Prediction",
+        };
+      } else {
+        var reaction = "";
+        if (raju[0].score === 0) {
+          reaction = "Oops!! 🥵";
+        } else if (raju[0].score === 2) {
+          reaction = "Uufff!! 😮‍💨";
+        } else if (raju[0].score === 3) {
+          reaction = "Woohoo!! 🎉";
+        }
+        data[index - k] = {
+          result: upcoming[index].prediction,
+          _id: upcoming[index]._id,
+          team1: upcoming[index].team1,
+          team2: upcoming[index].team2,
+          date: upcoming[index].date,
+          time: upcoming[index].time,
+          venue: upcoming[index].venue,
+          matchType: upcoming[index].matchType,
+          ispredict: true,
+          userPrediction: {
+            predictiont1: raju[0].predictiont1,
+            predictiont2: raju[0].predictiont2,
+          },
+          reaction,
+        };
+      }
+    }
+    upcoming = data;
     res.status(200).json({
       status: "200",
-      upcoming: upcoming,
+      upcoming,
     });
   } catch (err) {
     res.status(200).json({
