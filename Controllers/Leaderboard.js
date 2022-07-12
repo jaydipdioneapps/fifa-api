@@ -4,10 +4,6 @@ const Match = require("../models/Match");
 const Cup = require("../models/Cup");
 const moment = require("moment");
 function removeDubeliment(arr) {
-  // const duplicateIds = arr
-  //   .map((v) => v.user.toString())
-  //   .filter((v, i, vIds) => vIds.indexOf(v.toString()) !== i);
-  // const duplicates = arr.filter((obj) => duplicateIds.includes(obj.user));
   let duplicateIds = Object.values(
     arr.reduce(
       (acc, cur) => Object.assign(acc, { [cur.user.toString()]: cur }),
@@ -22,6 +18,7 @@ exports.get = async function (req, res, next) {
     let today = moment(new Date()).format("YYYY-MM-DD[T00:00:00.000Z]");
     let cupData = await Cup.findById(req.params.id);
     let todayUserList = [];
+    let todayUserScore = [];
     let todayUserLeaderboardList = [];
 
     let matchs = cupData.match;
@@ -66,20 +63,31 @@ exports.get = async function (req, res, next) {
       if (dm.length) {
         let score = 0;
         for (let k = 0; k < dm.length; k++) {
-          score += dm[k].score ;
+          score += dm[k].score;
         }
         let km = {
-          name: dm[0].user.name,
+          name: dm[i].user.name,
+          userId: dm[i].user.id,
           score: score,
         };
         todayUserLeaderboardList = [...todayUserLeaderboardList, km];
       }
     }
+    todayUserLeaderboardList.sort((a, b) => {
+      return b.score - a.score;
+    });
+    todayUserLeaderboardList.map((e, i) => {
+      if (e.userId === req.body.userId) {
+        todayUserScore.push(e);
+      }
+      e.num = i + 1;
+    });
     let GlobalUserList = [];
+    let GlobalUserScore = [];
     let GlobalUserLeaderboardList = [];
     for (let i = 0; i < matchs.length; i++) {
       let find = await Prediction.find(
-        { match: matchs[i] },
+        { match: matchs[i], createAt: today },
         {
           _id: 0,
           predictiont1: 0,
@@ -96,12 +104,12 @@ exports.get = async function (req, res, next) {
       }
     }
     GlobalUserList = removeDubeliment(GlobalUserList);
-    dm = [];
+    jk = [];
     for (let i = 0; i < GlobalUserList.length; i++) {
       let find = [];
       for (let j = 0; j < matchs.length; j++) {
         find = await Prediction.find(
-          { match: matchs[j], user: GlobalUserList[i].user },
+          { match: matchs[j], createAt: today, user: GlobalUserList[i].user },
           {
             _id: 0,
             predictiont1: 0,
@@ -112,26 +120,37 @@ exports.get = async function (req, res, next) {
           }
         ).populate("user");
         if (find.length) {
-          dm = [...dm, ...find];
+          jk = [...jk, ...find];
         }
       }
-      if (dm.length) {
+      if (jk.length) {
         let score = 0;
-        for (let k = 0; k < dm.length; k++) {
-          score += dm[k].score ;
+        for (let k = 0; k < jk.length; k++) {
+          score += jk[k].score;
         }
         let km = {
-          name: dm[0].user.name,
+          name: jk[i].user.name,
+          userId: jk[i].user.id,
           score: score,
         };
         GlobalUserLeaderboardList = [...GlobalUserLeaderboardList, km];
       }
     }
-
+    GlobalUserLeaderboardList.sort((a, b) => {
+      return b.score - a.score;
+    });
+    GlobalUserLeaderboardList.map((e, i) => {
+      if (e.userId === req.body.userId) {
+        GlobalUserScore.push(e);
+      }
+      e.num = i + 1;
+    });
     res.status(200).json({
       status: "200",
+      todayUserScore,
       todayUserLeaderboardList,
-      GlobalUserLeaderboardList
+      GlobalUserScore,
+      GlobalUserLeaderboardList,
     });
   } catch (err) {
     res.status(200).json({
