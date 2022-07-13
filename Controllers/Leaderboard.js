@@ -1,6 +1,6 @@
 const Prediction = require("../models/Prediction");
-const User = require("../models/User");
-const Match = require("../models/Match");
+// const User = require("../models/User");
+// const Match = require("../models/Match");
 const Cup = require("../models/Cup");
 const moment = require("moment");
 function removeDubeliment(arr) {

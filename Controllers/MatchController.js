@@ -247,16 +247,22 @@ exports.getForResult = async function (req, res) {
           predictiont1: 0,
           predictiont2: 0,
         },
-        reaction: "http://13.233.194.118:3002/images/reactions/noprediction.png",
+        reaction:
+          "http://13.233.194.118:3002/images/reactions/noprediction.png",
+        message: " ",
       };
     } else {
       var reaction = "";
       if (raju[0].score === 0) {
         reaction = "http://13.233.194.118:3002/images/reactions/oops!!.png";
+        message = "Your Prediction was tottally wrong.";
       } else if (raju[0].score === 2) {
         reaction = "http://13.233.194.118:3002/images/reactions/uufff!!.png";
+        message =
+          "What you Predicted is wrong but the team you think wins has won, so you get 2 point.";
       } else if (raju[0].score === 3) {
         reaction = "http://13.233.194.118:3002/images/reactions/woohoo!!.png";
+        message = "Your Prediction came true, so you get 3 point.";
       }
       main[0] = {
         result: main[0].prediction,
@@ -273,6 +279,7 @@ exports.getForResult = async function (req, res) {
           predictiont2: raju[0].predictiont2,
         },
         reaction,
+        message,
       };
     }
 
@@ -327,16 +334,22 @@ exports.getForResult = async function (req, res) {
             predictiont1: 0,
             predictiont2: 0,
           },
-          reaction: "http://13.233.194.118:3002/images/reactions/noprediction.png",
+          reaction:
+            "http://13.233.194.118:3002/images/reactions/noprediction.png",
+          message: " ",
         };
       } else {
         var reaction = "";
         if (raju[0].score === 0) {
           reaction = "http://13.233.194.118:3002/images/reactions/oops!!.png";
+          message = "Your Prediction was tottally wrong.";
         } else if (raju[0].score === 2) {
           reaction = "http://13.233.194.118:3002/images/reactions/uufff!!.png";
+          message =
+            "What you Predicted is wrong but the team you think wins has won, so you get 2 point.";
         } else if (raju[0].score === 3) {
           reaction = "http://13.233.194.118:3002/images/reactions/woohoo!!.png";
+          message = "Your Prediction came true, so you get 3 point.";
         }
         data[index - k] = {
           result: last[index].prediction,
@@ -353,6 +366,7 @@ exports.getForResult = async function (req, res) {
             predictiont2: raju[0].predictiont2,
           },
           reaction,
+          message,
         };
       }
     }
@@ -404,7 +418,9 @@ exports.getForUpcoming = async function (req, res) {
         user: req.body.userId,
         match: upcoming[index]._id,
       });
-      upcoming[index].date.setDate(new Date(upcoming[index].date).getDate() + 1);
+      upcoming[index].date.setDate(
+        new Date(upcoming[index].date).getDate() + 1
+      );
       if (raju.length === 0) {
         data[index - k] = {
           result: upcoming[index].prediction,
@@ -498,8 +514,11 @@ exports.getonDate = async function (req, res) {
     );
     today.map(async (e, i) => {
       today[i].time = today[i].time.toUpperCase();
-      console.log(today[i].time);
     });
+    for (var i = 0; i < today.length; i++) {
+      today[i].team1.colors = await Colors.findById(today[i].team1.colors);
+      today[i].team2.colors = await Colors.findById(today[i].team2.colors);
+    }
     res.status(200).json({
       status: "200",
       today,

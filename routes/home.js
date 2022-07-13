@@ -18,6 +18,6 @@ router.get("/", AuthController.protectGlobal, function (req, res) {
     });
   }
 });
-router.post("/send_email", AuthController.mainsending);
+// router.post("/send_email", AuthController.mainsending);
 
 module.exports = router;
