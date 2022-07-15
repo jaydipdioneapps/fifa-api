@@ -62,7 +62,7 @@ exports.signUp = async function (req, res, next) {
       service: "gmail",
       auth: {
         user: "info@dioneapps.com",
-        pass: "gztusgabmplteawm",
+        pass: "yhadxhcggjabqiuo",
       },
     });
 
@@ -70,7 +70,6 @@ exports.signUp = async function (req, res, next) {
       from: "info@dioneapps.com",
       to: to,
       subject: subject,
-      text: message,
       html: html,
     };
 
@@ -236,7 +235,7 @@ exports.mailSending = async function (req, res, next) {
       service: "gmail",
       auth: {
         user: "info@dioneapps.com",
-        pass: "gztusgabmplteawm",
+        pass: "yhadxhcggjabqiuo",
       },
     });
 
@@ -244,7 +243,6 @@ exports.mailSending = async function (req, res, next) {
       from: "info@dioneapps.com",
       to: to,
       subject: subject,
-      text: message,
       html: html,
     };
 
