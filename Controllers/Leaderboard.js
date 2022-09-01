@@ -87,7 +87,7 @@ exports.get = async function (req, res, next) {
     let GlobalUserLeaderboardList = [];
     for (let i = 0; i < matchs.length; i++) {
       let find = await Prediction.find(
-        { match: matchs[i], createAt: today },
+        { match: matchs[i] },
         {
           _id: 0,
           predictiont1: 0,
@@ -104,12 +104,13 @@ exports.get = async function (req, res, next) {
       }
     }
     GlobalUserList = removeDubeliment(GlobalUserList);
+    // console.log(GlobalUserList);
     jk = [];
     for (let i = 0; i < GlobalUserList.length; i++) {
       let find = [];
       for (let j = 0; j < matchs.length; j++) {
         find = await Prediction.find(
-          { match: matchs[j], createAt: today, user: GlobalUserList[i].user },
+          { match: matchs[j], user: GlobalUserList[i].user },
           {
             _id: 0,
             predictiont1: 0,
@@ -139,12 +140,14 @@ exports.get = async function (req, res, next) {
     GlobalUserLeaderboardList.sort((a, b) => {
       return b.score - a.score;
     });
-    GlobalUserLeaderboardList.map((e, i) => {
-      if (e.userId === req.body.userId) {
-        GlobalUserScore.push(e);
+    for (let i = 0; i < GlobalUserLeaderboardList.length; i++) {
+      
+      if (GlobalUserLeaderboardList[i].userId === req.body.userId) {
+        GlobalUserScore.push(GlobalUserLeaderboardList[i]);
+        break
       }
-      e.num = i + 1;
-    });
+      GlobalUserLeaderboardList[i]['num'] = i + 1;
+    }
     res.status(200).json({
       status: "200",
       todayUserScore,

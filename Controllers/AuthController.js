@@ -156,8 +156,6 @@ exports.protect = async function (req, res, next) {
     if (!checkUser) {
       throw new Error("User Not Found");
     }
-    console.log(checkUser.password);
-    console.log(currentPassword);
     if (checkUser.password !== currentPassword) {
       throw new Error("Password is changed,So login aging");
     }

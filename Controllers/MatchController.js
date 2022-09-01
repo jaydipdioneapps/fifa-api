@@ -56,63 +56,66 @@ exports.getForHome = async function (req, res) {
     );
 
     today = [today[0]];
-    await today.map(async (e, i) => {
-      today[i].team1.colors = await Colors.findById(e.team1.colors);
-      return 0;
-    });
-    await today.map(async (e, i) => {
-      today[i].team2.colors = await Colors.findById(e.team2.colors);
-      return 0;
-    });
-    today.map(async (e, i) => {
-      today[i].time = await today[i].time.toUpperCase();
-    });
+    if (today.length){
+
+      await today.map(async (e, i) => {
+        today[i].team1.colors = await Colors.findById(e.team1.colors);
+        return 0;
+      });
+      await today.map(async (e, i) => {
+        today[i].team2.colors = await Colors.findById(e.team2.colors);
+        return 0;
+      });
+      today.map(async (e, i) => {
+        today[i].time = await today[i].time.toUpperCase();
+      });
+      let data = [];
+      today[0].date.setDate(new Date(today[0].date).getDate() + 1);
+      let raju = await Prediction.find({
+        user: req.body.userId,
+        match: today[0]._id,
+      });
+      today[0].date.setDate(new Date(today[0].date).getDate() + 1);
+      let cnt = await Prediction.find({ match: today[0]._id });
+      if (raju.length === 0) {
+        today[0] = {
+          result: today[0].prediction,
+          _id: today[0]._id,
+          team1: today[0].team1,
+          team2: today[0].team2,
+          date: today[0].date,
+          time: today[0].time,
+          venue: today[0].venue,
+          matchType: today[0].matchType,
+          ispredict: false,
+          userPrediction: {
+            predictiont1: 0,
+            predictiont2: 0,
+          },
+          totalPrediction: cnt.length,
+        };
+      } else {
+        today[0] = {
+          result: today[0].prediction,
+          _id: today[0]._id,
+          team1: today[0].team1,
+          team2: today[0].team2,
+          date: today[0].date,
+          time: today[0].time,
+          venue: today[0].venue,
+          matchType: today[0].matchType,
+          ispredict: true,
+          userPrediction: {
+            predictiont1: raju[0].predictiont1,
+            predictiont2: raju[0].predictiont2,
+          },
+          totalPrediction: cnt.length,
+        };
+      }
+    }
 
     // today[0].date
 
-    let data = [];
-    today[0].date.setDate(new Date(today[0].date).getDate() + 1);
-    let raju = await Prediction.find({
-      user: req.body.userId,
-      match: today[0]._id,
-    });
-    today[0].date.setDate(new Date(today[0].date).getDate() + 1);
-    let cnt = await Prediction.find({ match: today[0]._id });
-    if (raju.length === 0) {
-      today[0] = {
-        result: today[0].prediction,
-        _id: today[0]._id,
-        team1: today[0].team1,
-        team2: today[0].team2,
-        date: today[0].date,
-        time: today[0].time,
-        venue: today[0].venue,
-        matchType: today[0].matchType,
-        ispredict: false,
-        userPrediction: {
-          predictiont1: 0,
-          predictiont2: 0,
-        },
-        totalPrediction: cnt.length,
-      };
-    } else {
-      today[0] = {
-        result: today[0].prediction,
-        _id: today[0]._id,
-        team1: today[0].team1,
-        team2: today[0].team2,
-        date: today[0].date,
-        time: today[0].time,
-        venue: today[0].venue,
-        matchType: today[0].matchType,
-        ispredict: true,
-        userPrediction: {
-          predictiont1: raju[0].predictiont1,
-          predictiont2: raju[0].predictiont2,
-        },
-        totalPrediction: cnt.length,
-      };
-    }
 
     //  console.log(today[i].team2.colors);
     // $gte:"Mon May 30 18:47:00 +0000 2015",
@@ -393,20 +396,24 @@ exports.getForUpcoming = async function (req, res) {
     let upcoming = await Match.find({
       date: { $gte: d },
     }).populate(
-      "team1 team2",
+      "team1 team2 team1.colors",
       "-players  -createAt -__v -description -teamphoto "
     );
     upcoming.map(async (e, i) => {
       upcoming[i].time = upcoming[i].time.toUpperCase();
     });
-    await upcoming.map(async (e, i) => {
-      upcoming[i].team2.colors = await Colors.findById(e.team2.colors);
-      return 0;
-    });
-    await upcoming.map(async (e, i) => {
-      upcoming[i].team1.colors = await Colors.findById(e.team1.colors);
-      return 0;
-    });
+    for (let i = 0; i < upcoming.length; i++) {
+      upcoming[i].team2.colors = await Colors.findById(upcoming[i].team2.colors);
+      upcoming[i].team1.colors = await Colors.findById(upcoming[i].team1.colors);
+    }
+    // await upcoming.map(async (e, i) => {
+    //   console.log(upcoming[i].team2.colors);
+    //   return 0;
+    // });
+    // await upcoming.map(async (e, i) => {
+    //   console.log(upcoming[i].team1.colors);
+    //   return 0;
+    // });
     let data = [];
     let k = 0;
     for (let index = 0; index < upcoming.length; index++) {
@@ -566,7 +573,6 @@ exports.score = async function (req, res, next) {
     );
     id.map(async (e) => {
       let data = await Prediction.findByIdAndUpdate(e.id, { score: 0 });
-      console.log(data);
     });
     if (req.body.team1 > req.body.team2) {
       let id = await Prediction.find(
@@ -575,8 +581,9 @@ exports.score = async function (req, res, next) {
           match: ids,
         },
         { _id: 1 }
-      );
-      id.map(async (e) => {
+        );
+        // console.log(ids);
+        id.map(async (e) => {
         await Prediction.findByIdAndUpdate(e.id, { score: 2 });
       });
     } else if (req.body.team1 < req.body.team2) {
