@@ -55,8 +55,8 @@ exports.getForHome = async function (req, res) {
       "-players  -createAt -__v -description -teamphoto "
     );
 
-    today = [today[0]];
     if (today.length){
+      today = [today[0]];
 
       await today.map(async (e, i) => {
         today[i].team1.colors = await Colors.findById(e.team1.colors);
@@ -141,7 +141,7 @@ exports.getForHome = async function (req, res) {
       last[i].team2.colors = await Colors.findById(e.team2.colors);
       return 0;
     });
-    // let data = [];
+    let data = [];
     for (let index = 0; index < last.length; index++) {
       let raju = await Prediction.find({
         user: req.body.userId,
@@ -186,8 +186,6 @@ exports.getForHome = async function (req, res) {
       }
     }
     last = data;
-    // console.log(i);
-    // console.log(last);
     res.status(200).json({
       status: "200",
       today: today,
@@ -632,3 +630,4 @@ exports.score = async function (req, res, next) {
     });
   }
 };
+

@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
 const cors = require("cors");
 const app = express();
+const path = require('path');
 
 mongoose.connect('mongodb+srv://dione_apps:Dione&169@cluster0.5yxff.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
     { useUnifiedTopology: true, useNewUrlParser: true })
@@ -11,7 +12,10 @@ mongoose.connect('mongodb+srv://dione_apps:Dione&169@cluster0.5yxff.mongodb.net/
     .catch(err => console.log("DB connection error: ", err));
 
 app.use(morgan("dev"));
-app.use(express.static('public'));
+//app.use(express.static('public'));
+
+app.use('/images', express.static(path.join(__dirname, 'public/images')))
+app.use('//images', express.static(path.join(__dirname, 'public/images')))
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());

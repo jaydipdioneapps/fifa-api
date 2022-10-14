@@ -35,7 +35,7 @@ exports.get = async function (req, res, next) {
           score: 0,
         }
       );
-
+      
       if (find.length) {
         todayUserList = [...todayUserList, ...find];
       }
@@ -105,11 +105,11 @@ exports.get = async function (req, res, next) {
     }
     GlobalUserList = removeDubeliment(GlobalUserList);
     // console.log(GlobalUserList);
-    jk = [];
+    let jk = [];
     for (let i = 0; i < GlobalUserList.length; i++) {
       let find = [];
       for (let j = 0; j < matchs.length; j++) {
-        find = await Prediction.find(
+        let getData = await Prediction.find(
           { match: matchs[j], user: GlobalUserList[i].user },
           {
             _id: 0,
@@ -120,29 +120,33 @@ exports.get = async function (req, res, next) {
             __v: 0,
           }
         ).populate("user");
-        if (find.length) {
-          jk = [...jk, ...find];
+        if (getData.length) {
+          find = [...find ,...getData]
+          // jk = [...jk, ...find];
         }
       }
-      if (jk.length) {
+      // console.log(find);
+      if (find.length) {
         let score = 0;
         for (let k = 0; k < jk.length; k++) {
           score += jk[k].score;
         }
         let km = {
-          name: jk[i].user.name,
-          userId: jk[i].user.id,
+          name: find[0].user.name,
+          userId: find[0].user._id,
           score: score,
         };
         GlobalUserLeaderboardList = [...GlobalUserLeaderboardList, km];
-      }
+        // jk= [];
+      } 
     }
     GlobalUserLeaderboardList.sort((a, b) => {
       return b.score - a.score;
     });
     for (let i = 0; i < GlobalUserLeaderboardList.length; i++) {
-      
-      if (GlobalUserLeaderboardList[i].userId === req.body.userId) {
+      console.log(req.body.userId);
+      console.log(GlobalUserLeaderboardList[i].userId);
+      if (GlobalUserLeaderboardList[i].userId == req.body.userId) {
         GlobalUserScore.push(GlobalUserLeaderboardList[i]);
         break
       }
@@ -150,6 +154,8 @@ exports.get = async function (req, res, next) {
     }
     res.status(200).json({
       status: "200",
+      // cupData,
+      // GlobalUserList,
       todayUserScore,
       todayUserLeaderboardList,
       GlobalUserScore,
@@ -162,3 +168,4 @@ exports.get = async function (req, res, next) {
     });
   }
 };
+
