@@ -1,6 +1,7 @@
 const express = require("express");
 const userModel = require("../models/User");
 var AuthController = require("../Controllers/AuthController");
+var socketController = require("../Controllers/socketController");
 var jwt = require("jsonwebtoken");
 
 function SocketRouter(io) {
@@ -111,6 +112,7 @@ function SocketRouter(io) {
                 if (!data.match) {
                   io.emit("error", "Please match id");
                 } else {
+                  data.user = checkUser;
                   socket.broadcast.to(data.match).emit("message",data);
                 }
               }
@@ -156,6 +158,7 @@ function SocketRouter(io) {
                 if (!data.match) {
                   io.emit("error", "Please match id");
                 } else {
+                  data.user = checkUser;
                   socket.broadcast.to(data.match).emit("rection",data);
                 }
               }
@@ -167,7 +170,7 @@ function SocketRouter(io) {
     });
     // })
   });
-
+  router.post('/', AuthController.protectGlobal, socketController.get);
   return router;
 }
 

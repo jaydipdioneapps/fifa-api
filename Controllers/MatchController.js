@@ -55,6 +55,20 @@ exports.getForHome = async function (req, res) {
       "-players  -createAt -__v -description -teamphoto "
     );
 
+    // var d = new Date();
+    // d.setDate(new Date().getDate());
+    // var tomorrow = moment(d).format("YYYY-MM-DD[T00:00:00.000Z]");
+    // console.log(d);
+    // let today = await Match.find({
+    //   date: tomorrow,
+    // }).populate(
+    //   "team1 team2",
+    //   "-players  -createAt -__v -description -teamphoto "
+    // );
+    // today.map(async (e, i) => {
+    //   today[i].time = today[i].time.toUpperCase();
+    //   console.log(today[i].time);
+    // });
     if (today.length){
       today = [today[0]];
 
@@ -69,13 +83,13 @@ exports.getForHome = async function (req, res) {
       today.map(async (e, i) => {
         today[i].time = await today[i].time.toUpperCase();
       });
-      let data = [];
-      today[0].date.setDate(new Date(today[0].date).getDate() + 1);
+      // let data = [];
+      // today[0].date.setDate(new Date(today[0].date).getDate() + 1);
       let raju = await Prediction.find({
         user: req.body.userId,
         match: today[0]._id,
       });
-      today[0].date.setDate(new Date(today[0].date).getDate() + 1);
+      // today[0].date.setDate(new Date(today[0].date).getDate() + 1);
       let cnt = await Prediction.find({ match: today[0]._id });
       if (raju.length === 0) {
         today[0] = {
